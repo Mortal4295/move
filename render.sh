@@ -3,6 +3,10 @@
 # Usage: ./render.sh [seconds]
 set -euo pipefail
 DUR="${1:-5}"
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  sudo apt-get update -qq
+  sudo apt-get install -y -qq ffmpeg
+fi
 mkdir -p out
 ffmpeg -y -loglevel error \
   -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=${DUR}" \
