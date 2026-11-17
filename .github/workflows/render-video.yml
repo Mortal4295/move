@@ -1,0 +1,33 @@
+name: Render video
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: "Test video duration in seconds"
+        required: false
+        default: "5"
+  push:
+    branches: [main]
+    paths:
+      - "render.sh"
+      - ".github/workflows/render-video.yml"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Render test video with FFmpeg
+        run: |
+          chmod +x render.sh
+          ./render.sh "${{ inputs.duration || '5' }}"
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-video
+          path: out/test.mp4
+          retention-days: 7
